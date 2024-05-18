@@ -1,0 +1,59 @@
+@echo off
+echo Demande d'élévation des privilèges administratifs...
+NET FILE 1>NUL 2>NUL
+if '%errorlevel%' == '0' (goto gotAdmin) else (goto getAdmin)
+
+:getAdmin
+echo Demande d'élévation des privilèges administratifs en cours...
+echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+"%temp%\getadmin.vbs"
+del "%temp%\getadmin.vbs"
+exit /B
+
+:gotAdmin
+echo Vous avez les privilèges administratifs.
+
+:menu
+cls
+echo Choisissez une adresse IP :
+echo 1. materielip192.168.1.100
+echo 2. materielip192.168.1.101
+echo 3. materielip192.168.1.102
+echo 4. materielip192.168.1.103
+set /p choix="Entrez le numéro correspondant au matériel  : "
+
+if "%choix%"=="1" goto ip1
+if "%choix%"=="2" goto ip2
+if "%choix%"=="3" goto ip3
+if "%choix%"=="4" goto ip4
+
+echo Choix invalide, miaou. Veuillez entrer un numéro valide.
+pause
+goto menu
+
+:ip1
+set AdresseIP=192.168.1.100
+goto changer_ip
+
+:ip2
+set AdresseIP=192.168.1.101
+goto changer_ip
+
+:ip3
+set AdresseIP=192.168.1.102
+goto changer_ip
+
+:ip4
+set AdresseIP=192.168.1.103
+goto changer_ip
+
+:changer_ip
+:: Modification de l'adresse IP, du masque de sous-réseau et de la passerelle
+echo Modification de l'adresse IP, du masque de sous-réseau et de la passerelle...
+
+netsh interface ipv4 set address name="Nom de votre connexion réseau" static %AdresseIP% 255.255.255.0 Passerelle
+
+echo Miaou.
+pause
